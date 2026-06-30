@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Teste Bem Simples</title>
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    .wrapper {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    button {
+      width: 50px;
+      height: 50px;
+      font-size: 24px;
+      cursor: pointer;
+      background: lightblue;
+      border: 1px solid blue;
+      border-radius: 5px;
+    }
+    .carousel {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      width: 400px;
+      padding: 10px;
+      background: lightyellow;
+      scroll-behavior: smooth;
+    }
+    .item {
+      flex: 0 0 150px;
+      background: white;
+      padding: 20px;
+      border: 1px solid gray;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Teste Bem Simples</h1>
+  <p>Clique nos botões para fazer o carrossel rolar.</p>
+
+  <div class="wrapper">
+    <button id="btnPrev">← PREV</button>
+    <div class="carousel" id="carousel">
+      <div class="item">1</div>
+      <div class="item">2</div>
+      <div class="item">3</div>
+      <div class="item">4</div>
+      <div class="item">5</div>
+    </div>
+    <button id="btnNext">NEXT →</button>
+  </div>
+
+  <script>
+    console.log('Script carregado');
+
+    const carousel = document.getElementById('carousel');
+    const btnPrev = document.getElementById('btnPrev');
+    const btnNext = document.getElementById('btnNext');
+
+    console.log('carousel:', carousel);
+    console.log('btnPrev:', btnPrev);
+    console.log('btnNext:', btnNext);
+
+    if (btnPrev) {
+      btnPrev.onclick = function() {
+        console.log('Clicou PREV');
+        carousel.scrollLeft -= 200;
+      };
+    }
+
+    if (btnNext) {
+      btnNext.onclick = function() {
+        console.log('Clicou NEXT');
+        carousel.scrollLeft += 200;
+      };
+    }
+  </script>
+
+</body>
+</html>

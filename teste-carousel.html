@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teste Carrossel</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #f5f1ed;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    .carousel-container {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-top: 30px;
+    }
+    .carousel-btn {
+      width: 40px;
+      height: 40px;
+      min-width: 40px;
+      background: white;
+      border: 1px solid rgba(11, 154, 160, 0.2);
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      z-index: 2;
+      font-size: 20px;
+      font-weight: bold;
+      color: #0b9aa0;
+    }
+    .carousel-btn:hover {
+      background: rgba(11, 154, 160, 0.1);
+      border-color: rgba(11, 154, 160, 0.4);
+    }
+    .depoimentos-carousel {
+      display: flex;
+      gap: 15px;
+      overflow-x: auto;
+      scroll-behavior: smooth;
+      flex: 1;
+      padding: 10px;
+      scrollbar-width: none;
+    }
+    .depoimentos-carousel::-webkit-scrollbar {
+      display: none;
+    }
+    .depoimentos-card {
+      flex: 0 0 calc(33.333% - 10px);
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(26, 58, 82, 0.06);
+      min-height: 150px;
+    }
+    .depoimentos-card p {
+      margin: 0 0 10px 0;
+      font-size: 14px;
+      line-height: 1.4;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Teste do Carrossel de Depoimentos</h1>
+    <p>Clique nas setas para navegar. Abra o console (F12) para ver logs.</p>
+
+    <div class="carousel-container">
+      <button class="carousel-btn carousel-prev" title="Anterior">←</button>
+
+      <div class="depoimentos-carousel">
+        <div class="depoimentos-card">
+          <p><strong>Card 1</strong></p>
+          <p>Teste de carrossel. Clique nas setas.</p>
+        </div>
+        <div class="depoimentos-card">
+          <p><strong>Card 2</strong></p>
+          <p>Segunda mensagem de teste.</p>
+        </div>
+        <div class="depoimentos-card">
+          <p><strong>Card 3</strong></p>
+          <p>Terceira mensagem de teste.</p>
+        </div>
+        <div class="depoimentos-card">
+          <p><strong>Card 4</strong></p>
+          <p>Quarta mensagem de teste.</p>
+        </div>
+        <div class="depoimentos-card">
+          <p><strong>Card 5</strong></p>
+          <p>Quinta mensagem de teste.</p>
+        </div>
+      </div>
+
+      <button class="carousel-btn carousel-next" title="Próximo">→</button>
+    </div>
+  </div>
+
+  <script>
+    console.log('Página carregada');
+
+    function initCarousel() {
+      const carousel = document.querySelector('.depoimentos-carousel');
+      const prevBtn = document.querySelector('.carousel-prev');
+      const nextBtn = document.querySelector('.carousel-next');
+
+      console.log('Carousel:', carousel);
+      console.log('PrevBtn:', prevBtn);
+      console.log('NextBtn:', nextBtn);
+
+      if (!carousel || !prevBtn || !nextBtn) {
+        console.error('Elementos não encontrados');
+        return;
+      }
+
+      console.log('✅ Carrossel inicializado');
+
+      prevBtn.addEventListener('click', () => {
+        console.log('Clicou prev');
+        carousel.scrollBy({ left: -350, behavior: 'smooth' });
+      });
+
+      nextBtn.addEventListener('click', () => {
+        console.log('Clicou next');
+        carousel.scrollBy({ left: 350, behavior: 'smooth' });
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', initCarousel);
+  </script>
+</body>
+</html>
