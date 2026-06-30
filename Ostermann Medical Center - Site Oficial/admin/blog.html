@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Admin Blog | Ostermann Medical Center</title>
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/reset.css">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/blog.css">
+</head>
+<body class="admin-body">
+  <section class="login-screen" data-login-screen>
+    <form class="login-card" data-login-form>
+      <div class="login-brand">
+        <img src="../assets/logos/LOGOAZULCOMPLETA.png" alt="Ostermann Medical Center">
+      </div>
+      <span class="eyebrow" style="margin-bottom: 0.6rem;">Area editorial</span>
+      <h1>Admin do Blog</h1>
+      <p class="login-copy">Publique, revise e otimize artigos para SEO antes de enviar para o site.</p>
+      <div class="field">
+        <label for="admin-password">Senha</label>
+        <input id="admin-password" type="password" autocomplete="current-password" placeholder="Digite a senha">
+      </div>
+      <button class="admin-btn login-submit" type="submit">Entrar</button>
+      <p data-login-error class="hidden" style="color: #a32626; margin-top: 1rem;">Senha incorreta.</p>
+      <p class="login-note">Acesso restrito. Este painel salva os dados localmente no navegador.</p>
+    </form>
+  </section>
+
+  <div class="admin-app hidden" data-admin-app>
+    <aside class="admin-sidebar">
+      <div class="admin-logo">
+        <img src="../assets/logos/LOGOBEGECOMPLETA.png" alt="Ostermann Medical Center">
+      </div>
+      <nav class="admin-menu" aria-label="Menu administrativo">
+        <button type="button" class="active" data-admin-tab="dashboard">Dashboard</button>
+        <button type="button" data-admin-tab="posts">Posts</button>
+        <button type="button" data-admin-tab="editor">Novo post</button>
+        <button type="button" data-admin-tab="categories">Categorias</button>
+        <button type="button" data-admin-tab="tags">Tags</button>
+        <button type="button" data-admin-tab="settings">Configuracoes</button>
+      </nav>
+    </aside>
+
+    <main class="admin-main">
+      <div class="admin-topbar">
+        <div>
+          <span class="eyebrow" style="margin-bottom: 0.35rem;">Blog SEO</span>
+          <h1 style="font-size: 2.3rem; margin-bottom: 0;">Painel administrativo</h1>
+        </div>
+        <div class="admin-actions">
+          <a class="admin-btn secondary" href="../blog/index.html" target="_blank">Ver blog</a>
+          <button class="admin-btn secondary" type="button" data-export-js>Gerar blog-posts.js</button>
+          <button class="admin-btn secondary" type="button" data-export-json>Exportar JSON</button>
+          <button class="admin-btn secondary" type="button" data-export-sitemap>Exportar sitemap</button>
+          <button class="admin-btn danger" type="button" data-logout>Sair</button>
+        </div>
+      </div>
+
+      <section data-panel="dashboard">
+        <div class="admin-stats">
+          <div class="admin-card admin-stat"><strong data-stat-total>0</strong><span>Total de posts</span></div>
+          <div class="admin-card admin-stat"><strong data-stat-published>0</strong><span>Publicados</span></div>
+          <div class="admin-card admin-stat"><strong data-stat-drafts>0</strong><span>Rascunhos</span></div>
+          <div class="admin-card admin-stat"><strong data-stat-scheduled>0</strong><span>Agendados</span></div>
+        </div>
+        <div class="admin-card">
+          <h2>Posts recentes</h2>
+          <table class="admin-table">
+            <thead><tr><th>Titulo</th><th>Status</th><th>Categoria</th><th>SEO</th></tr></thead>
+            <tbody data-dashboard-posts></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="hidden" data-panel="posts">
+        <div class="admin-card">
+          <div class="admin-topbar" style="margin-bottom: 1rem;">
+            <h2 style="margin: 0;">Posts</h2>
+            <button class="admin-btn" type="button" data-new-post>Criar novo post</button>
+          </div>
+          <table class="admin-table">
+            <thead><tr><th>Titulo</th><th>Slug</th><th>Status</th><th>Categoria</th><th>Data</th><th>Acoes</th></tr></thead>
+            <tbody data-posts-table></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="hidden" data-panel="editor">
+        <form data-post-form>
+          <input type="hidden" data-field="id">
+          <div class="editor-grid">
+            <div class="admin-card">
+              <h2>Conteudo do post</h2>
+              <div class="field">
+                <label>Titulo do post</label>
+                <input data-field="title" type="text" placeholder="Ex: Como cuidar da saude digestiva">
+              </div>
+              <div class="field-grid">
+                <div class="field">
+                  <label>Slug da URL</label>
+                  <input data-field="slug" type="text" placeholder="como-cuidar-da-saude-digestiva">
+                </div>
+                <div class="field">
+                  <label>Status</label>
+                  <select data-field="status">
+                    <option value="draft">Rascunho</option>
+                    <option value="published">Publicado</option>
+                    <option value="scheduled">Agendado</option>
+                  </select>
+                </div>
+              </div>
+              <div class="field">
+                <label>Resumo curto</label>
+                <textarea data-field="excerpt" rows="3"></textarea>
+              </div>
+              <div class="field-grid">
+                <div class="field">
+                  <label>Imagem destacada</label>
+                  <input data-field="image" type="text" placeholder="../assets/blog/imagem.jpg">
+                  <input data-image-upload type="file" accept="image/*" style="margin-top: 0.5rem;">
+                </div>
+                <div class="field">
+                  <label>Alt text da imagem</label>
+                  <input data-field="imageAlt" type="text">
+                </div>
+              </div>
+              <div class="editor-toolbar">
+                <button type="button" data-command="bold">B</button>
+                <button type="button" data-command="italic">I</button>
+                <button type="button" data-command="formatBlock" data-value="h2">H2</button>
+                <button type="button" data-command="formatBlock" data-value="h3">H3</button>
+                <button type="button" data-command="insertUnorderedList">Lista</button>
+                <button type="button" data-command="createLink">Link</button>
+              </div>
+              <div class="field">
+                <label>Conteudo completo</label>
+                <div class="rich-editor" contenteditable="true" data-rich-editor></div>
+              </div>
+            </div>
+
+            <aside class="admin-card">
+              <h2>SEO e publicacao</h2>
+              <div class="field">
+                <label>Categoria <span style="color:#a32626">*</span></label>
+                <select data-field="category" data-category-select>
+                  <option value="">Selecione uma categoria</option>
+                  <option value="Metabolismo">Metabolismo</option>
+                  <option value="Longevidade">Longevidade</option>
+                  <option value="Saúde Digestiva">Saúde Digestiva</option>
+                  <option value="Guias Completos">Guias Completos</option>
+                </select>
+                <span class="field-error hidden" data-category-error>Selecione uma das categorias antes de salvar.</span>
+              </div>
+              <div class="field">
+                <label>Tags ou palavras-chave</label>
+                <input data-field="tags" type="text" placeholder="tag 1, tag 2">
+              </div>
+              <div class="field">
+                <label>Autor</label>
+                <input data-field="author" type="text" value="Ostermann Medical Center">
+              </div>
+              <div class="field-grid">
+                <div class="field">
+                  <label>Data publicacao</label>
+                  <input data-field="publishedAt" type="date">
+                </div>
+                <div class="field">
+                  <label>Data atualizacao</label>
+                  <input data-field="updatedAt" type="date">
+                </div>
+              </div>
+              <div class="field">
+                <label>Meta title</label>
+                <input data-field="metaTitle" type="text" maxlength="70">
+              </div>
+              <div class="field">
+                <label>Meta description</label>
+                <textarea data-field="metaDescription" rows="3" maxlength="180"></textarea>
+              </div>
+              <div class="field">
+                <label>Palavra-chave principal</label>
+                <input data-field="primaryKeyword" type="text">
+              </div>
+              <div class="field">
+                <label>Palavras-chave secundarias</label>
+                <input data-field="secondaryKeywords" type="text" placeholder="palavra 1, palavra 2">
+              </div>
+              <div class="field">
+                <label>Posts relacionados</label>
+                <input data-field="related" type="text" placeholder="slug-1, slug-2">
+              </div>
+              <div class="seo-meter" data-seo-meter></div>
+              <div class="admin-actions" style="margin-top: 1rem;">
+                <button class="admin-btn secondary" type="button" data-preview-post>Previa</button>
+                <button class="admin-btn secondary" type="button" data-save-draft>Salvar rascunho</button>
+                <button class="admin-btn" type="submit">Salvar post</button>
+              </div>
+            </aside>
+          </div>
+        </form>
+      </section>
+
+      <section class="hidden" data-panel="categories">
+        <div class="admin-card">
+          <h2>Categorias</h2>
+          <p>Categorias sao calculadas a partir dos posts existentes. Edite a categoria dentro de cada post para gerenciar a lista.</p>
+          <div class="chip-list" data-admin-categories></div>
+        </div>
+      </section>
+
+      <section class="hidden" data-panel="tags">
+        <div class="admin-card">
+          <h2>Tags</h2>
+          <p>Tags sao calculadas a partir dos posts existentes. Edite as tags dentro de cada post para gerenciar a lista.</p>
+          <div class="chip-list" data-admin-tags></div>
+        </div>
+      </section>
+
+      <section class="hidden" data-panel="settings">
+        <div class="admin-card">
+          <h2>Configuracoes</h2>
+          <p>Este painel roda no navegador e salva alteracoes em localStorage. Para publicacao real com login seguro, upload persistente e criacao automatica de URLs, conecte este modelo a um CMS ou backend.</p>
+          <p><strong>Fluxo atual:</strong> preparar posts, validar SEO, exportar JSON/sitemap e aplicar os arquivos no site estatico.</p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="../js/blog-posts.js"></script>
+  <script src="../js/admin-blog.js"></script>
+</body>
+</html>
