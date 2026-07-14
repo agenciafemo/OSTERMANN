@@ -10,7 +10,7 @@
   }
 
   function removeBanner(banner) {
-    banner.style.transform = "translateY(100%)";
+    banner.style.transform = "translateY(120%)";
     banner.style.opacity = "0";
     setTimeout(function () { if (banner.parentNode) banner.parentNode.removeChild(banner); }, 400);
   }
@@ -52,13 +52,13 @@
   function injectStyles() {
     var style = document.createElement("style");
     style.textContent =
-      "#cookie-banner{position:fixed;bottom:0;left:0;right:0;z-index:9999;" +
-      "background:#1a3a52;color:#fff;padding:1rem 1.5rem;" +
-      "box-shadow:0 -4px 24px rgba(0,0,0,.18);" +
+      "#cookie-banner{position:fixed;bottom:1.5rem;right:1.5rem;left:auto;z-index:9999;" +
+      "background:#1a3a52;color:#fff;padding:1.25rem 1.5rem;" +
+      "border-radius:1rem;max-width:380px;width:calc(100% - 3rem);" +
+      "box-shadow:0 8px 32px rgba(0,0,0,.22);" +
       "transform:translateY(0);opacity:1;" +
       "transition:transform .4s ease,opacity .4s ease;}" +
-      ".cookie-inner{max-width:1200px;margin:0 auto;" +
-      "display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap;}" +
+      ".cookie-inner{display:flex;flex-direction:column;gap:1rem;}" +
       ".cookie-text{margin:0;font-size:.9rem;line-height:1.6;flex:1;min-width:220px;}" +
       ".cookie-text a{color:#0b9aa0;text-decoration:underline;}" +
       ".cookie-actions{display:flex;gap:.75rem;flex-shrink:0;}" +
