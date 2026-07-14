@@ -21,6 +21,11 @@
       ]
     }
   ],
+  "redirects": [
+    { "source": "/exames-normais-mas-sintomas", "destination": "/blog/exames-normais-mas-sintomas", "permanent": true },
+    { "source": "/inchaco-abdominal-causas", "destination": "/blog/inchaco-abdominal-causas", "permanent": true },
+    { "source": "/resistencia-insulinica-emagrecimento", "destination": "/blog/resistencia-insulinica-emagrecimento", "permanent": true }
+  ],
   "rewrites": [
     { "source": "/blog", "destination": "/blog/index.html" },
     { "source": "/admin", "destination": "/admin/blog.html" }
