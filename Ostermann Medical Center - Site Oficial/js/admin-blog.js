@@ -127,7 +127,7 @@
         <td>${post.slug}</td>
         <td>${statusLabel(post.status)}</td>
         <td>${post.category || "-"}</td>
-        <td>${post.publishedAt || "-"}</td>
+        <td>${post.publishedAt || "-"}${post.publishedAtTime ? " " + post.publishedAtTime : ""}</td>
         <td>
           <div class="admin-actions">
             <button class="admin-btn secondary" type="button" data-edit="${post.id}">Editar</button>
@@ -162,6 +162,39 @@
       <div class="seo-check ${score.percent >= 75 ? "ok" : "warn"}"><strong>SEO: ${score.percent}%</strong> ${score.percent >= 75 ? "Bom" : "Precisa melhorar"}</div>
       ${score.checks.map((check) => `<div class="seo-check ${check.ok ? "ok" : "warn"}">${check.ok ? "OK" : "Ajustar"} - ${check.label}</div>`).join("")}
     `;
+  }
+
+  let toastTimer = null;
+  function showToast(message) {
+    const toast = $("[data-toast]");
+    if (!toast) return;
+    toast.textContent = message;
+    toast.classList.remove("hidden");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.add("hidden"), 2600);
+  }
+
+  function updateImagePreview() {
+    const preview = $("[data-image-preview]");
+    const value = $("[data-field='image']")?.value.trim();
+    if (!preview) return;
+    if (value) {
+      preview.src = value;
+      preview.classList.add("visible");
+    } else {
+      preview.classList.remove("visible");
+    }
+  }
+
+  function updateCharCounts() {
+    $$("[data-char-count]").forEach((counter) => {
+      const field = $(`[data-field='${counter.dataset.charCount}']`);
+      if (!field) return;
+      const max = Number(field.getAttribute("maxlength")) || null;
+      const length = field.value.length;
+      counter.textContent = max ? `${length}/${max}` : `${length}`;
+      counter.classList.toggle("warn", Boolean(max) && length > max * 0.95);
+    });
   }
 
   function renderAll() {
@@ -209,6 +242,10 @@
       }
     });
     $("[data-rich-editor]").innerHTML = post.contentHtml || (post.content || []).join("");
+    $("[data-title-error]")?.classList.add("hidden");
+    $("[data-category-error]")?.classList.add("hidden");
+    updateImagePreview();
+    updateCharCounts();
     renderSeoMeter(readForm());
   }
 
@@ -226,8 +263,15 @@
     return post;
   }
 
-  function saveForm(status) {
+  function saveForm(status, options = {}) {
     const post = readForm();
+    const titleError = $("[data-title-error]");
+    if (!post.title) {
+      if (titleError) titleError.classList.remove("hidden");
+      $("[data-field='title']")?.focus();
+      return;
+    }
+    if (titleError) titleError.classList.add("hidden");
     const categoryError = $("[data-category-error]");
     if (!post.category) {
       if (categoryError) categoryError.classList.remove("hidden");
@@ -235,6 +279,11 @@
       return;
     }
     if (categoryError) categoryError.classList.add("hidden");
+    const existing = posts.find((item) => item.id === post.id);
+    if (status === "draft" && existing && existing.status !== "draft") {
+      const confirmed = confirm(`Este post esta como "${statusLabel(existing.status).replace(/<[^>]+>/g, "")}". Salvar como rascunho vai despublica-lo. Continuar?`);
+      if (!confirmed) return;
+    }
     if (status) post.status = status;
     if (!post.id) post.id = "post-" + Date.now();
     if (!post.slug) post.slug = slugify(post.title);
@@ -244,7 +293,9 @@
     else posts.unshift(post);
     savePosts();
     renderAll();
-    setPanel("posts");
+    fillForm(post);
+    showToast(status === "draft" ? "Rascunho salvo." : "Post salvo.");
+    if (!options.stay) setPanel("posts");
   }
 
   function editPost(id) {
@@ -331,9 +382,18 @@
       showLogin();
     });
 
-    $("[data-new-post]").addEventListener("click", () => {
-      fillForm(blankPost());
-      setPanel("editor");
+    $$("[data-new-post]").forEach((button) => {
+      button.addEventListener("click", () => {
+        fillForm(blankPost());
+        setPanel("editor");
+      });
+    });
+
+    $("[data-cancel-edit]").addEventListener("click", () => {
+      if (confirm("Descartar as alteracoes deste post?")) {
+        fillForm(blankPost());
+        setPanel("posts");
+      }
     });
 
     $("[data-post-form]").addEventListener("submit", (event) => {
@@ -341,10 +401,24 @@
       saveForm();
     });
 
-    $("[data-save-draft]").addEventListener("click", () => saveForm("draft"));
+    $("[data-save-draft]").addEventListener("click", () => saveForm("draft", { stay: true }));
     $("[data-preview-post]").addEventListener("click", () => previewPost());
     $("[data-export-js]").addEventListener("click", exportJs);
     $("[data-export-sitemap]").addEventListener("click", exportSitemap);
+
+    $$("[data-fill]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const target = button.dataset.fill;
+        const source = target === "metaTitle" ? "title" : "excerpt";
+        const targetField = $(`[data-field='${target}']`);
+        const sourceField = $(`[data-field='${source}']`);
+        if (!targetField || !sourceField) return;
+        const max = Number(targetField.getAttribute("maxlength")) || undefined;
+        targetField.value = sourceField.value.slice(0, max);
+        updateCharCounts();
+        renderSeoMeter(readForm());
+      });
+    });
 
     document.addEventListener("click", (event) => {
       const edit = event.target.closest("[data-edit]");
@@ -372,8 +446,12 @@
       renderSeoMeter(readForm());
     });
 
-    $$("[data-field]").forEach((field) => field.addEventListener("input", () => renderSeoMeter(readForm())));
+    $$("[data-field]").forEach((field) => field.addEventListener("input", () => {
+      updateCharCounts();
+      renderSeoMeter(readForm());
+    }));
     $("[data-rich-editor]").addEventListener("input", () => renderSeoMeter(readForm()));
+    $("[data-field='image']").addEventListener("input", updateImagePreview);
 
     $("[data-image-upload]").addEventListener("change", (event) => {
       const file = event.target.files[0];
@@ -381,6 +459,7 @@
       const reader = new FileReader();
       reader.onload = () => {
         $("[data-field='image']").value = reader.result;
+        updateImagePreview();
         renderSeoMeter(readForm());
       };
       reader.readAsDataURL(file);

@@ -37,7 +37,7 @@
       <nav class="admin-menu" aria-label="Menu administrativo">
         <button type="button" class="active" data-admin-tab="dashboard">Dashboard</button>
         <button type="button" data-admin-tab="posts">Posts</button>
-        <button type="button" data-admin-tab="editor">Novo post</button>
+        <button type="button" data-admin-tab="editor" data-new-post>Novo post</button>
         <button type="button" data-admin-tab="categories">Categorias</button>
         <button type="button" data-admin-tab="tags">Tags</button>
       </nav>
@@ -91,8 +91,9 @@
             <div class="admin-card">
               <h2>Conteudo do post</h2>
               <div class="field">
-                <label>Titulo do post</label>
+                <label>Titulo do post <span style="color:#a32626">*</span></label>
                 <input data-field="title" type="text" placeholder="Ex: Como cuidar da saude digestiva">
+                <span class="field-error hidden" data-title-error>Preencha o titulo antes de salvar.</span>
               </div>
               <div class="field-grid">
                 <div class="field">
@@ -117,6 +118,7 @@
                   <label>Imagem destacada</label>
                   <input data-field="image" type="text" placeholder="../assets/blog/imagem.jpg">
                   <input data-image-upload type="file" accept="image/*" style="margin-top: 0.5rem;">
+                  <img data-image-preview class="image-preview" alt="Previa da imagem destacada">
                 </div>
                 <div class="field">
                   <label>Alt text da imagem</label>
@@ -139,6 +141,8 @@
 
             <aside class="admin-card">
               <h2>SEO e publicacao</h2>
+
+              <h3 class="field-section">Publicacao</h3>
               <div class="field">
                 <label>Categoria <span style="color:#a32626">*</span></label>
                 <select data-field="category" data-category-select>
@@ -172,13 +176,23 @@
                 <label>Data atualizacao</label>
                 <input data-field="updatedAt" type="date">
               </div>
+
+              <h3 class="field-section">SEO</h3>
               <div class="field">
-                <label>Meta title</label>
+                <div class="field-label-row">
+                  <label>Meta title</label>
+                  <button class="field-fill-btn" type="button" data-fill="metaTitle">Usar titulo</button>
+                </div>
                 <input data-field="metaTitle" type="text" maxlength="70">
+                <span class="char-count" data-char-count="metaTitle"></span>
               </div>
               <div class="field">
-                <label>Meta description</label>
+                <div class="field-label-row">
+                  <label>Meta description</label>
+                  <button class="field-fill-btn" type="button" data-fill="metaDescription">Usar resumo</button>
+                </div>
                 <textarea data-field="metaDescription" rows="3" maxlength="180"></textarea>
+                <span class="char-count" data-char-count="metaDescription"></span>
               </div>
               <div class="field">
                 <label>Palavra-chave principal</label>
@@ -188,12 +202,16 @@
                 <label>Palavras-chave secundarias</label>
                 <input data-field="secondaryKeywords" type="text" placeholder="palavra 1, palavra 2">
               </div>
+
+              <h3 class="field-section">Relacionados</h3>
               <div class="field">
                 <label>Posts relacionados</label>
                 <input data-field="related" type="text" placeholder="slug-1, slug-2">
               </div>
+
               <div class="seo-meter" data-seo-meter></div>
               <div class="admin-actions" style="margin-top: 1rem;">
+                <button class="admin-btn secondary" type="button" data-cancel-edit>Cancelar</button>
                 <button class="admin-btn secondary" type="button" data-preview-post>Previa</button>
                 <button class="admin-btn secondary" type="button" data-save-draft>Salvar rascunho</button>
                 <button class="admin-btn" type="submit">Salvar post</button>
@@ -226,6 +244,7 @@
         </div>
       </section>
     </main>
+    <div class="admin-toast hidden" data-toast></div>
   </div>
 
   <script src="../js/blog-posts.js"></script>
