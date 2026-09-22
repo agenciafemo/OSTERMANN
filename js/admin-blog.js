@@ -304,8 +304,11 @@
   }
 
   function exportSitemap() {
-    const urls = ["/", "/blog/", ...posts.filter((post) => post.status === "published").map((post) => `/blog/${post.slug}/`)];
-    const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map((url) => `  <url><loc>${url}</loc><lastmod>${today()}</lastmod><changefreq>weekly</changefreq><priority>${url === "/" ? "1.0" : "0.8"}</priority></url>`).join("\n")}\n</urlset>\n`;
+    // Sitemap exige URLs absolutas; sem barra final porque o vercel.json usa trailingSlash: false
+    const siteUrl = "https://ostermannmedicalcenter.com.br";
+    const pages = ["/pages/digestivo", "/pages/obesidade", "/pages/longevidade", "/pages/especialistas"];
+    const urls = ["/", ...pages, "/blog", ...posts.filter((post) => post.status === "published").map((post) => `/blog/${post.slug}`)];
+    const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map((url) => `  <url><loc>${siteUrl}${url}</loc><lastmod>${today()}</lastmod><changefreq>weekly</changefreq><priority>${url === "/" ? "1.0" : "0.8"}</priority></url>`).join("\n")}\n</urlset>\n`;
     downloadFile("sitemap.xml", xml, "application/xml");
   }
 

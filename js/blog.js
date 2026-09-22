@@ -51,7 +51,7 @@
   }
 
   function postUrl(post) {
-    return `/blog/${post.slug}/`;
+    return `/blog/${post.slug}`;
   }
 
   function assetUrl(path) {
