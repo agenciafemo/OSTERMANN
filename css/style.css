@@ -974,8 +974,9 @@ footer a:hover {
 }
 
 @media (max-width: 768px) {
+  /* !important: as paginas de servico definem 4 colunas inline */
   .blind-spot-symptoms {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, 1fr) !important;
     gap: 1rem;
   }
 
@@ -2925,5 +2926,269 @@ form {
 @media (max-width: 768px) {
   .reveal {
     animation-delay: 0ms !important;
+  }
+}
+
+/* ==========================================
+   RESPONSIVIDADE MOBILE / TABLET
+   ========================================== */
+
+/* Ancoras (#agendar etc.) nao ficam escondidas atras do header fixo */
+html {
+  scroll-padding-top: 110px;
+}
+
+/* Rede de seguranca: nada deve alargar a pagina alem da tela */
+html,
+body {
+  overflow-x: clip;
+}
+
+/* Recuo do texto do hero so faz sentido no layout de duas colunas */
+@media (min-width: 1025px) {
+  .hero-content-offset {
+    margin-left: calc(var(--spacing-lg) * -1);
+  }
+}
+
+/* Botao do menu mobile (criado pelo main.js) */
+.menu-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 44px;
+  height: 44px;
+  padding: 0 11px;
+  background: transparent;
+  border: none;
+  border-radius: 0.75rem;
+  cursor: pointer;
+}
+
+.menu-toggle span {
+  display: block;
+  height: 2px;
+  width: 100%;
+  background: var(--navy);
+  border-radius: 2px;
+  transition: transform var(--transition-base), opacity var(--transition-base);
+}
+
+header.menu-open .menu-toggle span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+
+header.menu-open .menu-toggle span:nth-child(2) {
+  opacity: 0;
+}
+
+header.menu-open .menu-toggle span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+.nav-cta-item {
+  display: none;
+}
+
+/* Tablet: hero em uma coluna (as colunas minimas de 480px+440px nao cabem) */
+@media (max-width: 1024px) {
+  .hero {
+    grid-template-columns: 1fr;
+    row-gap: 3.5rem;
+  }
+
+  .hero > div:last-child {
+    justify-self: center;
+    width: 100%;
+    max-width: 560px;
+  }
+
+  .hero-content {
+    max-width: 680px;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Header compacto: logo a esquerda, menu a direita */
+  header {
+    top: 0.75rem;
+    width: calc(100% - 1.5rem);
+    padding: 0 1rem;
+    border-radius: 1.25rem;
+  }
+
+  .header-content {
+    justify-content: space-between;
+    flex-wrap: wrap;
+    padding: 0.6rem 0;
+  }
+
+  .logo {
+    position: static;
+  }
+
+  .logo:hover {
+    transform: none;
+  }
+
+  .logo img {
+    max-height: 42px !important;
+  }
+
+  .menu-toggle {
+    display: flex;
+  }
+
+  header nav {
+    flex-basis: 100%;
+  }
+
+  header.menu-open {
+    background: rgba(255, 255, 255, 0.97);
+  }
+
+  header.menu-open nav ul {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    padding: 0.5rem 0 1rem;
+  }
+
+  header.menu-open nav a {
+    display: block;
+    padding: 0.9rem 0.25rem;
+    font-size: 1rem;
+    border-top: 1px solid rgba(26, 58, 82, 0.08);
+  }
+
+  header nav a::after {
+    display: none;
+  }
+
+  header.menu-open .nav-cta-item {
+    display: block;
+    padding-top: 0.75rem;
+  }
+
+  header.menu-open nav a.nav-cta {
+    display: flex !important;
+    position: static;
+    right: auto !important;
+    width: 100%;
+    justify-content: center;
+    border-top: none;
+    color: white;
+    transform: none;
+    padding: 1rem 1.5rem;
+    font-size: 0.9rem;
+  }
+
+  /* Hero */
+  .hero {
+    padding-top: 1.5rem;
+    row-gap: 3rem;
+  }
+
+  .hero h1 {
+    font-size: clamp(2rem, 8.5vw, 2.5rem);
+    line-height: 1.15;
+  }
+
+  .hero-content p {
+    font-size: 1.05rem;
+    line-height: 1.65;
+  }
+
+  .hero-media {
+    min-height: 0 !important;
+  }
+
+  .hero-badge {
+    right: 0.75rem !important;
+    bottom: -1.5rem !important;
+    max-width: 230px !important;
+    padding: 1rem 1.25rem !important;
+  }
+
+  /* Botoes: nunca maiores que a tela, texto quebra se precisar */
+  .btn {
+    max-width: 100%;
+    white-space: normal;
+    text-align: center;
+    justify-content: center;
+  }
+
+  .btn-primary {
+    transform: none;
+  }
+
+  .hero-content .btn {
+    width: 100%;
+    padding: 1.1rem 1.25rem;
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+  }
+
+  /* CTA "Tecnologia a servico da escuta clinica" empilhado */
+  .cta-resultado-jornada {
+    padding: 1.75rem 1.25rem;
+    margin-top: 2.5rem;
+  }
+
+  .cta-minimalista {
+    flex-direction: column;
+    text-align: center;
+    gap: 1.25rem;
+  }
+
+  .cta-separator-horizontal {
+    display: none;
+  }
+
+  .cta-title-horizontal {
+    font-size: 1.4rem;
+  }
+
+  .cta-action-horizontal,
+  .btn-cta-horizontal {
+    width: 100%;
+  }
+
+  .btn-cta-horizontal {
+    justify-content: center;
+    padding: 1rem 1.5rem;
+  }
+
+  /* Depoimentos: card largo com swipe, setas menores sobrepostas */
+  .section-depoimentos {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  .depoimentos-wrapper {
+    gap: 0 !important;
+  }
+
+  .depoimentos-carousel {
+    gap: 1rem !important;
+    padding: 0 0.25rem 0.5rem !important;
+    scroll-padding: 0 0.25rem;
+  }
+
+  .depoimentos-card {
+    flex: 0 0 86%;
+    padding: 1.5rem !important;
+  }
+
+  .depoimentos-wrapper .carousel-btn {
+    display: none !important;
+  }
+}
+
+@media (max-width: 640px) {
+  h2 {
+    font-size: 1.6rem;
   }
 }

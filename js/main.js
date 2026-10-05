@@ -145,24 +145,52 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 });
 
 // ==========================================
-// MOBILE MENU (Opcional para futuros)
+// MOBILE MENU
+// Cria o botão ☰ no header de todas as páginas; o CSS só o exibe até 768px
 // ==========================================
 
 function initMobileMenu() {
-  const menuToggle = document.querySelector('.menu-toggle');
-  const mobileMenu = document.querySelector('.mobile-menu');
+  const header = document.querySelector('header');
+  const headerContent = header && header.querySelector('.header-content');
+  const nav = header && header.querySelector('nav');
+  const navList = nav && nav.querySelector('ul');
 
-  if (!menuToggle || !mobileMenu) return;
+  if (!headerContent || !navList) return;
 
-  menuToggle.addEventListener('click', () => {
-    mobileMenu.classList.toggle('active');
+  // Leva o botão "Agendar consulta" do header para dentro do menu aberto
+  const headerCta = headerContent.querySelector(':scope > .btn');
+  if (headerCta) {
+    const item = document.createElement('li');
+    item.className = 'nav-cta-item';
+    const cta = document.createElement('a');
+    cta.href = headerCta.getAttribute('href');
+    cta.className = 'btn btn-primary nav-cta';
+    cta.textContent = headerCta.textContent.trim();
+    item.appendChild(cta);
+    navList.appendChild(item);
+  }
+
+  const toggle = document.createElement('button');
+  toggle.type = 'button';
+  toggle.className = 'menu-toggle';
+  toggle.setAttribute('aria-label', 'Abrir menu');
+  toggle.setAttribute('aria-expanded', 'false');
+  toggle.innerHTML = '<span></span><span></span><span></span>';
+  headerContent.insertBefore(toggle, nav);
+
+  const setOpen = (open) => {
+    header.classList.toggle('menu-open', open);
+    toggle.setAttribute('aria-expanded', String(open));
+    toggle.setAttribute('aria-label', open ? 'Fechar menu' : 'Abrir menu');
+  };
+
+  toggle.addEventListener('click', () => setOpen(!header.classList.contains('menu-open')));
+  navList.querySelectorAll('a').forEach(link => link.addEventListener('click', () => setOpen(false)));
+  document.addEventListener('click', (e) => {
+    if (!header.contains(e.target)) setOpen(false);
   });
-
-  // Fechar ao clicar em um link
-  mobileMenu.querySelectorAll('a').forEach(link => {
-    link.addEventListener('click', () => {
-      mobileMenu.classList.remove('active');
-    });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') setOpen(false);
   });
 }
 
