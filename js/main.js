@@ -409,28 +409,84 @@ function initUnitChat() {
   const typingDelays = [400, 500, 650];
   let nextMessage = 0;
   let messageTimer = null;
+  let optionsTimer = null;
+  let panelResize = null;
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const entranceEasing = 'cubic-bezier(0.22, 1, 0.36, 1)';
+
+  function animateEntry(element, delay = 0) {
+    if (reducedMotion.matches || typeof element.animate !== 'function') return;
+    element.animate([
+      { opacity: 0, transform: 'translateY(10px)' },
+      { opacity: 1, transform: 'translateY(0)' }
+    ], { duration: 340, delay, easing: entranceEasing, fill: 'backwards' });
+  }
+
+  function updateChatLayout(update) {
+    const previousHeight = panel.getBoundingClientRect().height;
+    if (panelResize) panelResize.cancel();
+    panelResize = null;
+    panel.classList.remove('is-resizing');
+    update();
+    const nextHeight = panel.getBoundingClientRect().height;
+    if (reducedMotion.matches || typeof panel.animate !== 'function' || previousHeight === nextHeight) return;
+    panel.classList.add('is-resizing');
+    const animation = panel.animate([
+      { height: previousHeight + 'px' },
+      { height: nextHeight + 'px' }
+    ], { duration: 380, easing: entranceEasing });
+    panelResize = animation;
+    animation.onfinish = () => {
+      if (panelResize !== animation) return;
+      panelResize = null;
+      panel.classList.remove('is-resizing');
+    };
+  }
+
+  function scheduleOptions() {
+    if (!options.hidden || optionsTimer !== null) return;
+    optionsTimer = window.setTimeout(() => {
+      optionsTimer = null;
+      if (panel.hidden) return;
+      updateChatLayout(() => {
+        options.hidden = false;
+        note.hidden = false;
+      });
+      options.querySelectorAll('a').forEach((link, index) => animateEntry(link, index * 70));
+      animateEntry(note, 240);
+    }, reducedMotion.matches ? 0 : 180);
+  }
 
   function continueConversation() {
-    if (nextMessage === messages.length || messageTimer !== null) return;
-    typing.hidden = false;
+    if (nextMessage === messages.length) {
+      scheduleOptions();
+      return;
+    }
+    if (messageTimer !== null) return;
+    updateChatLayout(() => { typing.hidden = false; });
     messageTimer = window.setTimeout(() => {
       messageTimer = null;
       if (panel.hidden) return;
-      messages[nextMessage].hidden = false;
-      nextMessage += 1;
-      if (nextMessage === messages.length) {
-        typing.hidden = true;
-        options.hidden = false;
-        note.hidden = false;
-      } else {
-        continueConversation();
-      }
+      const message = messages[nextMessage];
+      updateChatLayout(() => {
+        message.hidden = false;
+        nextMessage += 1;
+        if (nextMessage === messages.length) typing.hidden = true;
+      });
+      animateEntry(message);
+      if (nextMessage === messages.length) scheduleOptions();
+      else continueConversation();
     }, typingDelays[nextMessage]);
   }
 
   function closeChat() {
     window.clearTimeout(messageTimer);
+    window.clearTimeout(optionsTimer);
     messageTimer = null;
+    optionsTimer = null;
+    if (panelResize) panelResize.cancel();
+    panelResize = null;
+    panel.classList.remove('is-resizing');
     typing.hidden = true;
     panel.hidden = true;
     launcher.setAttribute('aria-expanded', 'false');

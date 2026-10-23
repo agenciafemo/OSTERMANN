@@ -841,6 +841,7 @@ h2 .highlight {
 }
 
 .unit-chat-panel {
+  box-sizing: border-box;
   position: absolute;
   right: 0;
   bottom: 78px;
@@ -854,6 +855,10 @@ h2 .highlight {
   border-radius: 1.25rem;
   background: #f5f1ed;
   box-shadow: 0 18px 60px rgba(13, 32, 51, 0.24);
+}
+
+.unit-chat-panel.is-resizing {
+  overflow-y: hidden;
 }
 
 .unit-chat-header {
