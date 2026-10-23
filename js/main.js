@@ -518,17 +518,22 @@ function initUnitChat() {
     if (event.key === 'Escape' && !panel.hidden) closeChat();
   });
 
+  const hero = document.querySelector('main .hero')?.closest('section')
+    || document.querySelector('main .blog-hero, main .post-hero, main > section');
+
   function revealChat() {
-    if (window.scrollY <= 0) return;
+    if (window.scrollY <= 0 || (hero && hero.getBoundingClientRect().bottom > 0)) return;
     launcher.hidden = false;
+    announcement.textContent = 'Você tem uma mensagem da Ostermann. Escolha uma unidade para atendimento.';
     document.body.classList.add('unit-chat-visible');
     window.removeEventListener('scroll', revealChat);
-    openChat();
+    animateEntry(launcher);
   }
 
   document.body.appendChild(chat);
   document.body.classList.add('unit-chat-ready');
   window.addEventListener('scroll', revealChat, { passive: true });
+  revealChat();
 }
 
 if (document.readyState === 'loading') {
