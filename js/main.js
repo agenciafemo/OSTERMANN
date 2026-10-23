@@ -318,3 +318,109 @@ function initCarousel() {
 
 document.addEventListener('DOMContentLoaded', initCarousel);
 
+
+// ==========================================
+// CHAT DE UNIDADES
+// ==========================================
+
+function initUnitChat() {
+  if (document.getElementById('unit-chat')) return;
+
+  const units = [
+    { name: 'Criciúma', phone: '554891391742' },
+    { name: 'Garopaba', phone: '554891124064' },
+    { name: 'Jaguaruna', phone: '5548996639300' },
+    { name: 'Araranguá', phone: '554899390892' }
+  ];
+  const chat = document.createElement('div');
+  chat.id = 'unit-chat';
+  chat.className = 'unit-chat';
+  chat.innerHTML = `
+    <section id="unit-chat-panel" class="unit-chat-panel" role="dialog" aria-labelledby="unit-chat-title" hidden>
+      <div class="unit-chat-header">
+        <span class="unit-chat-avatar" aria-hidden="true">O</span>
+        <div>
+          <h2 id="unit-chat-title">Ostermann Medical Center</h2>
+          <p>Atendimento pelo WhatsApp</p>
+        </div>
+        <button type="button" class="unit-chat-close" aria-label="Fechar chat">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 6 12 12M6 18 18 6"/></svg>
+        </button>
+      </div>
+      <div class="unit-chat-body">
+        <div class="unit-chat-message">
+          <p>Olá, tudo bem? Que bom ter você aqui!</p>
+          <p>Qual unidade você gostaria de ser atendido?</p>
+        </div>
+        <div class="unit-chat-options" aria-label="Escolha uma unidade"></div>
+        <p class="unit-chat-note">Escolha sua unidade para conversar pelo WhatsApp.</p>
+      </div>
+    </section>
+    <button type="button" class="unit-chat-launcher" aria-label="Abrir chat de unidades: 1 mensagem não lida" aria-expanded="false" aria-controls="unit-chat-panel" hidden>
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8v.5Z"/><path d="M8 11h.01M12 11h.01M16 11h.01"/></svg>
+      <span class="unit-chat-badge" aria-hidden="true">1</span>
+    </button>
+    <span class="unit-chat-announcement" role="status" aria-live="polite"></span>`;
+
+  const options = chat.querySelector('.unit-chat-options');
+  units.forEach(unit => {
+    const link = document.createElement('a');
+    const message = `Olá! Vim pelo site da Ostermann Medical Center e gostaria de agendar uma avaliação na unidade de ${unit.name}.`;
+    link.className = 'unit-chat-option';
+    link.href = `https://wa.me/${unit.phone}?text=${encodeURIComponent(message)}`;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    link.setAttribute('aria-label', `Ostermann ${unit.name}: conversar pelo WhatsApp`);
+    link.innerHTML = `<span>Ostermann ${unit.name}</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10"/></svg>`;
+    options.appendChild(link);
+  });
+
+  const launcher = chat.querySelector('.unit-chat-launcher');
+  const panel = chat.querySelector('.unit-chat-panel');
+  const closeButton = chat.querySelector('.unit-chat-close');
+  const badge = chat.querySelector('.unit-chat-badge');
+  const announcement = chat.querySelector('.unit-chat-announcement');
+
+  function closeChat() {
+    panel.hidden = true;
+    launcher.setAttribute('aria-expanded', 'false');
+    launcher.setAttribute('aria-label', 'Abrir chat de unidades');
+    launcher.focus({ preventScroll: true });
+  }
+
+  launcher.addEventListener('click', () => {
+    if (!panel.hidden) {
+      closeChat();
+      return;
+    }
+    panel.hidden = false;
+    badge.hidden = true;
+    announcement.textContent = '';
+    launcher.setAttribute('aria-expanded', 'true');
+    launcher.setAttribute('aria-label', 'Fechar chat de unidades');
+    closeButton.focus({ preventScroll: true });
+  });
+  closeButton.addEventListener('click', closeChat);
+  chat.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && !panel.hidden) closeChat();
+  });
+
+  function revealChat() {
+    if (window.scrollY <= 0) return;
+    launcher.hidden = false;
+    announcement.textContent = 'Você tem uma mensagem da Ostermann. Escolha uma unidade para atendimento.';
+    document.body.classList.add('unit-chat-visible');
+    window.removeEventListener('scroll', revealChat);
+  }
+
+  document.body.appendChild(chat);
+  document.body.classList.add('unit-chat-ready');
+  window.addEventListener('scroll', revealChat, { passive: true });
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initUnitChat);
+} else {
+  initUnitChat();
+}
+
