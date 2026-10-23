@@ -521,13 +521,24 @@ function initUnitChat() {
   const hero = document.querySelector('main .hero')?.closest('section')
     || document.querySelector('main .blog-hero, main .post-hero, main > section');
 
+  const header = document.querySelector('header');
+  let pastHero = false;
+
   function revealChat() {
-    if (window.scrollY <= 0 || (hero && hero.getBoundingClientRect().bottom > 0)) return;
+    const visibleTop = Math.max(0, header?.getBoundingClientRect().bottom || 0);
+    const reachedNextSection = window.scrollY > 0
+      && (!hero || hero.getBoundingClientRect().bottom <= visibleTop);
+    if (!reachedNextSection) {
+      pastHero = false;
+      return;
+    }
+    if (pastHero) return;
+    pastHero = true;
+    const firstReveal = launcher.hidden;
     launcher.hidden = false;
-    announcement.textContent = 'Você tem uma mensagem da Ostermann. Escolha uma unidade para atendimento.';
     document.body.classList.add('unit-chat-visible');
-    window.removeEventListener('scroll', revealChat);
-    animateEntry(launcher);
+    if (firstReveal) animateEntry(launcher);
+    if (panel.hidden) openChat();
   }
 
   document.body.appendChild(chat);
