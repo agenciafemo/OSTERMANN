@@ -323,6 +323,23 @@ document.addEventListener('DOMContentLoaded', initCarousel);
 // CHAT DE UNIDADES
 // ==========================================
 
+function getUnitChatGreeting(date = new Date()) {
+  const hour = Number(new Intl.DateTimeFormat('pt-BR', {
+    timeZone: 'America/Sao_Paulo',
+    hour: 'numeric',
+    hourCycle: 'h23'
+  }).format(date));
+
+  if (hour >= 5 && hour < 12) return 'bom dia';
+  if (hour >= 12 && hour < 18) return 'boa tarde';
+  return 'boa noite';
+}
+
+function getUnitChatWhatsAppUrl(unit, date = new Date()) {
+  const message = `Olá, ${getUnitChatGreeting(date)}! Tudo bem? Vim pelo site da Ostermann Medical Center e gostaria de agendar uma avaliação na unidade de ${unit.name}.`;
+  return `https://wa.me/${unit.phone}?text=${encodeURIComponent(message)}`;
+}
+
 function initUnitChat() {
   if (document.getElementById('unit-chat')) return;
 
@@ -349,8 +366,9 @@ function initUnitChat() {
       </div>
       <div class="unit-chat-body">
         <div class="unit-chat-message">
-          <p>Olá, tudo bem? Que bom ter você aqui!</p>
-          <p>Qual unidade você gostaria de ser atendido?</p>
+          <p class="unit-chat-greeting"></p>
+          <p>Que bom ter você aqui!</p>
+          <p>Em qual unidade você prefere ser atendido?</p>
         </div>
         <div class="unit-chat-options" aria-label="Escolha uma unidade"></div>
         <p class="unit-chat-note">Escolha sua unidade para conversar pelo WhatsApp.</p>
@@ -365,9 +383,11 @@ function initUnitChat() {
   const options = chat.querySelector('.unit-chat-options');
   units.forEach(unit => {
     const link = document.createElement('a');
-    const message = `Olá! Vim pelo site da Ostermann Medical Center e gostaria de agendar uma avaliação na unidade de ${unit.name}.`;
     link.className = 'unit-chat-option';
-    link.href = `https://wa.me/${unit.phone}?text=${encodeURIComponent(message)}`;
+    link.href = getUnitChatWhatsAppUrl(unit);
+    link.addEventListener('click', () => {
+      link.href = getUnitChatWhatsAppUrl(unit);
+    });
     link.target = '_blank';
     link.rel = 'noopener noreferrer';
     link.setAttribute('aria-label', `Ostermann ${unit.name}: conversar pelo WhatsApp`);
@@ -393,6 +413,11 @@ function initUnitChat() {
       closeChat();
       return;
     }
+    const now = new Date();
+    chat.querySelector('.unit-chat-greeting').textContent = `Olá, ${getUnitChatGreeting(now)}! Tudo bem?`;
+    options.querySelectorAll('a').forEach((link, index) => {
+      link.href = getUnitChatWhatsAppUrl(units[index], now);
+    });
     panel.hidden = false;
     badge.hidden = true;
     announcement.textContent = '';
