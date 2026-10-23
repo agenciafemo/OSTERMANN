@@ -913,8 +913,18 @@ h2 .highlight {
   padding: 1rem;
 }
 
-.unit-chat-message {
-  padding: 1rem;
+.unit-chat-messages {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.55rem;
+}
+
+.unit-chat-message,
+.unit-chat-typing {
+  width: fit-content;
+  max-width: 100%;
+  padding: 0.8rem 1rem;
   border: 1px solid rgba(26, 58, 82, 0.06);
   border-radius: 0.25rem 0.9rem 0.9rem;
   background: white;
@@ -929,8 +939,33 @@ h2 .highlight {
   font-size: inherit;
 }
 
-.unit-chat-message p + p {
-  margin-top: 0.65rem;
+.unit-chat-typing {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 44px;
+  margin-top: 0.55rem;
+}
+
+.unit-chat-typing span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #71838e;
+  animation: unit-chat-typing 0.75s ease-in-out infinite;
+}
+
+.unit-chat-typing span:nth-child(2) {
+  animation-delay: 0.12s;
+}
+
+.unit-chat-typing span:nth-child(3) {
+  animation-delay: 0.24s;
+}
+
+@keyframes unit-chat-typing {
+  0%, 60%, 100% { opacity: 0.45; transform: translateY(0); }
+  30% { opacity: 1; transform: translateY(-3px); }
 }
 
 .unit-chat-options {
@@ -1003,6 +1038,7 @@ h2 .highlight {
 @media (prefers-reduced-motion: reduce) {
   .unit-chat * {
     transition: none;
+    animation: none;
   }
 }
 

@@ -365,13 +365,16 @@ function initUnitChat() {
         </button>
       </div>
       <div class="unit-chat-body">
-        <div class="unit-chat-message">
-          <p class="unit-chat-greeting"></p>
-          <p>Que bom ter você aqui!</p>
-          <p>Em qual unidade você prefere ser atendido?</p>
+        <div class="unit-chat-messages" role="log" aria-label="Mensagens da Ostermann" aria-live="polite" aria-relevant="additions text">
+          <div class="unit-chat-message" hidden><p class="unit-chat-greeting"></p></div>
+          <div class="unit-chat-message" hidden><p>Que bom ter você aqui!</p></div>
+          <div class="unit-chat-message" hidden><p>Em qual unidade você prefere ser atendido?</p></div>
         </div>
-        <div class="unit-chat-options" aria-label="Escolha uma unidade"></div>
-        <p class="unit-chat-note">Escolha sua unidade para conversar pelo WhatsApp.</p>
+        <div class="unit-chat-typing" role="status" aria-label="Digitando" hidden>
+          <span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>
+        </div>
+        <div class="unit-chat-options" aria-label="Escolha uma unidade" hidden></div>
+        <p class="unit-chat-note" hidden>Escolha sua unidade para conversar pelo WhatsApp.</p>
       </div>
     </section>
     <button type="button" class="unit-chat-launcher" aria-label="Abrir chat de unidades: 1 mensagem não lida" aria-expanded="false" aria-controls="unit-chat-panel" hidden>
@@ -400,19 +403,42 @@ function initUnitChat() {
   const closeButton = chat.querySelector('.unit-chat-close');
   const badge = chat.querySelector('.unit-chat-badge');
   const announcement = chat.querySelector('.unit-chat-announcement');
+  const messages = chat.querySelectorAll('.unit-chat-message');
+  const typing = chat.querySelector('.unit-chat-typing');
+  const note = chat.querySelector('.unit-chat-note');
+  const typingDelays = [400, 500, 650];
+  let nextMessage = 0;
+  let messageTimer = null;
+
+  function continueConversation() {
+    if (nextMessage === messages.length || messageTimer !== null) return;
+    typing.hidden = false;
+    messageTimer = window.setTimeout(() => {
+      messageTimer = null;
+      if (panel.hidden) return;
+      messages[nextMessage].hidden = false;
+      nextMessage += 1;
+      if (nextMessage === messages.length) {
+        typing.hidden = true;
+        options.hidden = false;
+        note.hidden = false;
+      } else {
+        continueConversation();
+      }
+    }, typingDelays[nextMessage]);
+  }
 
   function closeChat() {
+    window.clearTimeout(messageTimer);
+    messageTimer = null;
+    typing.hidden = true;
     panel.hidden = true;
     launcher.setAttribute('aria-expanded', 'false');
     launcher.setAttribute('aria-label', 'Abrir chat de unidades');
     launcher.focus({ preventScroll: true });
   }
 
-  launcher.addEventListener('click', () => {
-    if (!panel.hidden) {
-      closeChat();
-      return;
-    }
+  function openChat(moveFocus = false) {
     const now = new Date();
     chat.querySelector('.unit-chat-greeting').textContent = `Olá, ${getUnitChatGreeting(now)}! Tudo bem?`;
     options.querySelectorAll('a').forEach((link, index) => {
@@ -423,19 +449,25 @@ function initUnitChat() {
     announcement.textContent = '';
     launcher.setAttribute('aria-expanded', 'true');
     launcher.setAttribute('aria-label', 'Fechar chat de unidades');
-    closeButton.focus({ preventScroll: true });
+    continueConversation();
+    if (moveFocus) closeButton.focus({ preventScroll: true });
+  }
+
+  launcher.addEventListener('click', () => {
+    if (panel.hidden) openChat(true);
+    else closeChat();
   });
   closeButton.addEventListener('click', closeChat);
-  chat.addEventListener('keydown', event => {
+  document.addEventListener('keydown', event => {
     if (event.key === 'Escape' && !panel.hidden) closeChat();
   });
 
   function revealChat() {
     if (window.scrollY <= 0) return;
     launcher.hidden = false;
-    announcement.textContent = 'Você tem uma mensagem da Ostermann. Escolha uma unidade para atendimento.';
     document.body.classList.add('unit-chat-visible');
     window.removeEventListener('scroll', revealChat);
+    openChat();
   }
 
   document.body.appendChild(chat);
